@@ -20,11 +20,15 @@ public class TriangleButton : MonoBehaviour
     public MeshRenderer dispLabel;
     public MeshRenderer buttonColorZone;
     public MeshRenderer bgColor;
+    public MeshRenderer colorblindLabel;
 
     public MeshRenderer fullButton;
         
     public KMSelectable button;
-    
+
+    private bool colorblindModeEnabled;
+    public KMColorblindMode colorblindMode;
+
     //public KMRuleSeedable RuleSeedable;
     string[] words = new string[75]
     { "RED", "GREEN", "PURPLE", "BROWN", "ORANGE", "BLUE", "GREY", "PINK", "WHITE", "UP",
@@ -93,6 +97,8 @@ public class TriangleButton : MonoBehaviour
     int neededNumber;
     int actionNeeded;
 
+    //int holds = 0;
+
     string heldString;
     string releasedString;
 
@@ -117,7 +123,7 @@ public class TriangleButton : MonoBehaviour
     void Start()
     {
         _moduleId = _moduleIdCounter++;
-
+        colorblindModeEnabled = colorblindMode.ColorblindModeActive;
         Init();
         pressedAllowed = true;
     }
@@ -126,6 +132,8 @@ public class TriangleButton : MonoBehaviour
     {
         delegationZone();
         //Module.OnActivate += delegate { inputResult.GetComponentInChildren<TextMesh>().text = ""; };
+
+        button.transform.localPosition = new Vector3(button.transform.localPosition.x, button.transform.localPosition.y, 2f);
         rLevel = 0.8f;
         gLevel = 0.8f;
         bLevel = 1.0f;
@@ -153,6 +161,10 @@ public class TriangleButton : MonoBehaviour
 
         Debug.LogFormat("[The Triangle Button #{0}] The button is pointing {1} and is colored {2}. Its label is '{3}' and the digit is {4}.", _moduleId, rotationNames[rotations], colorNames[colorNumber],
             words[labelNumber], shownDigit);
+        if (colorblindModeEnabled)
+        {
+            colorblindLabel.GetComponentInChildren<TextMesh>().text = colorNames[colorNumber];
+        }
         figureAnswer();
         pressedAllowed = true;
     }
@@ -162,7 +174,9 @@ public class TriangleButton : MonoBehaviour
     {
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonPress, transform);
         isHeld = true;
-        button.transform.Translate(0f, 0f, -.0073f);
+        button.transform.localPosition = new Vector3(button.transform.localPosition.x, button.transform.localPosition.y, -.1f);
+        //button.transform.Translate(0f, 0f, -.0073f);
+        //holds++;
         if (pressedAllowed)
         {
             heldString = Bomb.GetFormattedTime();
@@ -175,7 +189,13 @@ public class TriangleButton : MonoBehaviour
     void OnRelease()
     {
         isHeld = false;
-        button.transform.Translate(0f, 0f, .0073f);
+        button.transform.localPosition = new Vector3(button.transform.localPosition.x, button.transform.localPosition.y, 2f);
+            /*
+        for (int hN = 0; hN < holds; hN++)
+        {
+            button.transform.Translate(0f, 0f, .0073f);
+        }
+        holds = 0; Nothing doing until I figure translation out for good */
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.BigButtonRelease, transform);
         if (pressedAllowed)
         {
@@ -386,6 +406,12 @@ public class TriangleButton : MonoBehaviour
         {
             theError = "sendtochaterror Not enough arguments! You need to use 'tap/t/hold/h/release/r', then (1-9).";
             yield return theError;
+        }
+        else if (pieces.Count() >= 1 && pieces[0] == "colorblind")
+        {
+            colorblindModeEnabled = true;
+            colorblindLabel.GetComponentInChildren<TextMesh>().text = colorNames[colorNumber];
+            yield return null;
         }
         else if (pieces.Count() == 1 && (pieces[0] == "tap" || pieces[0] == "t" || pieces[0] == "hold" || pieces[0] == "h" || pieces[0] == "release" || pieces[0] == "r"))
         {
