@@ -13,16 +13,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: theTriangleButton
   title: The Triangle Button
-  description: 'The Triangle Button v1.02
+  description: 'The Triangle Button v1.03
 
     This may seem like acute module, but that''s not right. In fact, such a presumption
     is quite obtuse.
 
 
-    Manual to be available here: https://ktane.timwi.de/HTML/The%20Triangle%20Button.html
+    Manual available here: https://ktane.timwi.de/HTML/The%20Triangle%20Button.html
 
 
 '
-  version: 1.02
+  version: 1.03
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 333067803d4f81b4d988ef8ccbd9fce5, type: 3}

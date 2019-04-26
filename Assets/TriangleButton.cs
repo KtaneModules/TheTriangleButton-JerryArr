@@ -415,27 +415,27 @@ public class TriangleButton : MonoBehaviour
         }
         else if (pieces.Count() == 1 && (pieces[0] == "tap" || pieces[0] == "t" || pieces[0] == "hold" || pieces[0] == "h" || pieces[0] == "release" || pieces[0] == "r"))
         {
-            theError = "sendtochaterror Not enough arguments! You need to specify a digit the number of seconds remaining ends in, using !{0} tap/t/hold/h/release/r (1-9).";
+            theError = "sendtochaterror Not enough arguments! You need to specify a digit the number of seconds remaining ends in, using tap/t/hold/h/release/r (1-9).";
             yield return theError;
 
         }
         else if (pieces.Count() == 1 && !(pieces[0] == "tap" || pieces[0] == "t" || pieces[0] == "hold" || pieces[0] == "h" || pieces[0] == "release" || pieces[0] == "r"))
         {
-            theError = "sendtochaterror Invalid argument: " + pieces[0] + "! You need to specify a digit the number of seconds remaining ends in, using !{0} tap/t/hold/h/release/r (1-9).";
+            theError = "sendtochaterror Invalid argument: " + pieces[0] + "! You need to specify a digit the number of seconds remaining ends in, using tap/t/hold/h/release/r (1-9).";
             yield return theError;
 
         }
         else if (pieces.Count() > 1 && !(pieces[0] == "tap" || pieces[0] == "t" || pieces[0] == "hold" || pieces[0] == "h" || pieces[0] == "release" || pieces[0] == "r"))
         {
-            theError = "sendtochaterror Invalid argument: " + pieces[0] + "! You need to specify a digit the number of seconds remaining ends in, using !{0} tap/t/hold/h/release/r (1-9).";
+            theError = "sendtochaterror Invalid argument: " + pieces[0] + "! You need to specify a digit the number of seconds remaining ends in, using tap/t/hold/h/release/r (1-9).";
             yield return theError;
 
         }
         else if (pieces.Count() > 1 && !(pieces[1] == "1" || pieces[1] == "2" || pieces[1] == "3" ||
-                                        pieces[1] == "6" || pieces[1] == "5" || pieces[1] == "6" ||
+                                        pieces[1] == "4" || pieces[1] == "5" || pieces[1] == "6" ||
                                         pieces[1] == "7" || pieces[1] == "8" || pieces[1] == "9"))
         {
-            theError = "sendtochaterror Invalid argument: " + pieces[1] + " is not a digit from 1 to 9! You need to specify a digit the number of seconds remaining ends in, using !{0} tap/t/hold/h/release/r (1-9).";
+            theError = "sendtochaterror Invalid argument: " + pieces[1] + " is not a digit from 1 to 9! You need to specify a digit the number of seconds remaining ends in, using tap/t/hold/h/release/r (1-9).";
             yield return theError;
         }
         else if (pieces[0] == "tap" || pieces[0] == "t")
