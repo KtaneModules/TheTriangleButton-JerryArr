@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: theTriangleButton
   title: The Triangle Button
-  description: 'The Triangle Button v1.03
+  description: 'The Triangle Button v1.04
 
     This may seem like acute module, but that''s not right. In fact, such a presumption
     is quite obtuse.
@@ -23,6 +23,6 @@ MonoBehaviour:
 
 
 '
-  version: 1.03
+  version: 1.04
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 333067803d4f81b4d988ef8ccbd9fce5, type: 3}

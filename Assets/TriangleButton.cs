@@ -36,7 +36,7 @@ public class TriangleButton : MonoBehaviour
       "BLACK", "CYAN", "BOOM", "KABOOM", "BAM", "BLAM", "BOMB", "BOM", "HOLD", "PRESS",
       "TAP", "DETONATE", "RELEASE", "POINTING", "TRIANGLE", "SQUARE", "HEXAGON", "BUTTON", "CIRCLE", "REGULAR",
       "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN",
-      "ZERO", "MINUS", "PLUS", "MODULO", "DIGITAL", "LABEL", "CAPTION", "TEXT", "ABORT", "SUBMIT",
+      "ZERO", "MINUS", "PLUS", "MODULO", "DIGITAL", "LABEL", "CAPTION", "TEXT", "ABORT", "EXECUTE",
       "YES", "NO", "SUBMIT", "ENTER", "CLEAR", "RUN", "WALK", "DUCK", "QUACK", "DIGIT",
       "DISPLAY", "PUNCH", "SLAP", "DEFUSE", "EXPERT"
     };
@@ -391,7 +391,7 @@ public class TriangleButton : MonoBehaviour
     }
 
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Tap the button when integer number of seconds ends in (1-9) with !{0} (tap/t) (1-9). Hold when the number of seconds ends in (1-9) and release on 0 with !{0} (hold/h) (1-9). Hold when the number of seconds ends in 0 and release on (1-9) with !{0} (release/r) (1-9).";
+    private readonly string TwitchHelpMessage = @"Tap the button when integer number of seconds ends in (1-9) with !{0} (tap/t) (1-9). Hold when the number of seconds ends in (1-9) and release on 0 with !{0} (hold/h) (1-9). Hold when the number of seconds ends in 0 and release on (1-9) with !{0} (release/r) (1-9). You can also use !{0} (hold/h) X Y to hold on X and release on Y.";
     private readonly bool TwitchShouldCancelCommand = false;
 #pragma warning restore 414
 
@@ -401,7 +401,6 @@ public class TriangleButton : MonoBehaviour
         var pieces = command.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         string theError;
         theError = "";
-        yield return null;
         if (pieces.Count() == 0)
         {
             theError = "sendtochaterror Not enough arguments! You need to use 'tap/t/hold/h/release/r', then (1-9).";
@@ -431,7 +430,7 @@ public class TriangleButton : MonoBehaviour
             yield return theError;
 
         }
-        else if (pieces.Count() > 1 && !(pieces[1] == "1" || pieces[1] == "2" || pieces[1] == "3" ||
+        else if (pieces.Count() == 2 && !(pieces[1] == "1" || pieces[1] == "2" || pieces[1] == "3" ||
                                         pieces[1] == "4" || pieces[1] == "5" || pieces[1] == "6" ||
                                         pieces[1] == "7" || pieces[1] == "8" || pieces[1] == "9"))
         {
@@ -454,17 +453,63 @@ public class TriangleButton : MonoBehaviour
         }
         else if (pieces[0] == "hold" || pieces[0] == "h")
         {
-            yield return null;
-            holdWait = Int16.Parse(pieces[1]);
-            releaseWait = 0;
-            if (actionNeeded != 1 || holdWait != neededNumber)
+            if (pieces.Count() > 2 && !(pieces[2] == "1" || pieces[2] == "2" || pieces[2] == "3" ||
+                                        pieces[2] == "4" || pieces[2] == "5" || pieces[2] == "6" ||
+                                        pieces[2] == "7" || pieces[2] == "8" || pieces[2] == "9" || pieces[2] == "0"))
             {
-                yield return "strike";
+                theError = "sendtochaterror Invalid argument: " + pieces[2] + " is not a digit from 1 to 9! To hold and release on specific digits, use (hold/h) X Y, where X and Y are digits from 0-9.";
+                yield return theError;
+            }
+                yield return null;
+            holdWait = Int16.Parse(pieces[1]);
+            if (pieces.Count() > 2)
+            {
+                releaseWait = Int16.Parse(pieces[2]);
+                if (pieces[1] == "0")
+                {
+                    if (actionNeeded != 2 || releaseWait != neededNumber)
+                    {
+                        yield return "strike";
+                    }
+                    else
+                    {
+                        yield return "solve";
+                    }
+                }
+                else if (pieces[2] == "0")
+                {
+                    if (actionNeeded != 1 || holdWait != neededNumber)
+                    {
+                        yield return "strike";
+                    }
+                    else
+                    {
+                        yield return "solve";
+                    }
+                }
+                else if (pieces[1] == pieces[2] && actionNeeded == 0 && neededNumber == holdWait)
+                    //edge case where you can hold it and immediately release it, still counts as a tap
+                {
+                    yield return "solve";
+                }
+                else
+                {
+                    yield return "strike";
+                }
             }
             else
             {
-                yield return "solve";
+                if (actionNeeded != 1 || holdWait != neededNumber)
+                {
+                    yield return "strike";
+                }
+                else
+                {
+                    yield return "solve";
+                }
+                releaseWait = 0;
             }
+
             //           yield return theError;
         }
         else if (pieces[0] == "release" || pieces[0] == "r")
